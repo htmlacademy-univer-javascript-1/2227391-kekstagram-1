@@ -20,4 +20,6 @@ function isStringLengthAllowed(string, maxLength) {
 }
 
 isStringLengthAllowed('123456789', 5);
-export {getRandomNumber, isStringLengthAllowed};
+
+const isEscKey = (keyCode) => keyCode === 'Escape';
+export {getRandomNumber, isStringLengthAllowed, isEscKey};
