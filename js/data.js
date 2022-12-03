@@ -1,5 +1,5 @@
-import {faker} from '@faker-js/faker';
-import {getRandomNumber, isStringLengthAllowed} from './util.js';
+import { faker } from 'https://cdn.skypack.dev/@faker-js/faker';
+import {getRandomNumber} from './util.js';
 
 
 const PHOTOS = 25;
@@ -17,23 +17,22 @@ const MESSAGES = [
 ];
 
 let commentIndex = 1;
-const getComments = () => Array.from({length: getRandomNumber(0, 100)}).map(() => ({
+const getComments = () => ({
   id: commentIndex++,
-  avatar: `img/${getRandomNumber(1, MAX_AVATAR)}.svg`,
-  message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
-  name: `${faker.name.firstName()  } ${  faker.name.lastName()}`,
-}));
+  avatar: `img/avatar-${getRandomNumber(1, MAX_AVATAR)}.svg`,
+  message:  faker.datatype.boolean() ? MESSAGES[getRandomNumber(0, MESSAGES.length - 1)] :
+    `${MESSAGES[getRandomNumber(0, MESSAGES.length - 1)]} ${MESSAGES[getRandomNumber(0, MESSAGES.length - 1)]}`,
+  name: faker.name.firstName(),
+});
 
 
 const photos = () => Array.from({length: PHOTOS}).map((value, index) => ({
   id: index + 1,
   url: `photos/${index + 1}.jpg`,
-  description: faker.lorem.sentence(),
+  description: faker.lorem.sentence(getRandomNumber(1, 5)),
   likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-  comments: getComments(),
+  comments: Array.from({length: getRandomNumber(0, 15)}).map(() => getComments()),
 }));
 
-isStringLengthAllowed('123456789', 5);
-// eslint-disable-next-line no-console
-console.log(photos());
-export {photos, getComments};
+
+export {photos};

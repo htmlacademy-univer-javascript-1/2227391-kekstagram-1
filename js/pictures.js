@@ -1,5 +1,5 @@
 import {photos} from './data.js';
-import {openPictureModal} from './modalPicture.js';
+import {openPictureModal} from './modal-picture.js';
 
 const picturesListElem = document.querySelector('.pictures');
 const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -26,7 +26,7 @@ const renderPictures = () => {
   picturesListElem.addEventListener('click', (evt) => {
     const pictureElement = evt.target.closest('.picture');
     if (pictureElement) {
-      const clickedPicture = photos.find(({id}) => Number(pictureElement.dataset.id) === id);
+      const clickedPicture = pictures.find(({id}) => Number(pictureElement.dataset.id) === id);
       openPictureModal(clickedPicture);
     }
   });

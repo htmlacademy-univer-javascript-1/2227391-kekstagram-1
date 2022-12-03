@@ -2,7 +2,7 @@ import {isEscKey} from './util.js';
 
 const pictureModalElement = document.querySelector('.big-picture');
 const commentCountElement = document.querySelector('.comments-count');
-const imageElement = document.querySelector('.big-picture__img img');
+const imageElement = document.querySelector('.big-picture__img').querySelector('img');
 const likesCountElement = document.querySelector('.likes-count');
 const descriptionElement = document.querySelector('.social__caption');
 const buttonCloseElement = document.querySelector('#picture-cancel');
@@ -55,12 +55,10 @@ const openPictureModal = ({url, likes, comments, description}) => {
   commentCountElement.textContent = comments.length;
   likesCountElement.textContent = likes;
   descriptionElement.textContent = description;
-
-  renderComments(comments);
-
   document.body.classList.add('modal-open');
   pictureModalElement.classList.remove('hidden');
 
+  renderComments(comments);
   commentCountOnPic.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 
