@@ -1,5 +1,5 @@
 import {isEscKey} from './util.js';
-import {effects, styleForFilter} from './photoEffects.js';
+import {effects, styleForFilter} from './photo-effects.js';
 
 const uploadImage = document.querySelector('#upload-file');
 const editor = document.querySelector('.img-upload__overlay');
