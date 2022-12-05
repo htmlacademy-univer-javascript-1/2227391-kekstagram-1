@@ -23,8 +23,6 @@ const successTemplate = document.querySelector('#success');
 
 const event = new Event('change');
 
-effectLevel.classList.add('hidden');
-sliderElement.classList.add('hidden');
 let currentEffectClass = 'effects__preview--none';
 let currentEffectInfo = effects['marvin'];
 
@@ -196,9 +194,9 @@ const successFunc = () => {
   document.body.appendChild(successCopy);
 };
 
-const errorFunc = (text) => {
+const errorFunc = (message) => {
   const errorCopy = errorTemplate.cloneNode(true).content.querySelector('.error');
-  errorCopy.querySelector('.error__title').textContent = text;
+  errorCopy.querySelector('.error__title').textContent = message;
   errorCopy.classList.remove('hidden');
   errorCopy.addEventListener(
     'click',
@@ -212,7 +210,7 @@ const errorFunc = (text) => {
 };
 
 document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscKey(evt.key)) {
     const errorBlock = document.body.querySelector('.error');
     const errorCopy = errorTemplate.cloneNode(true);
     const successBlock = document.body.querySelector('.success');
