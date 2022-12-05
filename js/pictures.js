@@ -1,4 +1,4 @@
-import {photos} from './data.js';
+
 import {openPictureModal} from './modal-picture.js';
 
 const picturesListElem = document.querySelector('.pictures');
@@ -18,11 +18,10 @@ const appendPicture = (picture) => {
   picturesFragment.appendChild(pictureElement);
 };
 
-const renderPictures = () => {
-  const pictures = photos();
+const renderPictures = (pictures) => {
+  //const pictures = photos();
   pictures.forEach(appendPicture);
   picturesListElem.appendChild(picturesFragment);
-
   picturesListElem.addEventListener('click', (evt) => {
     const pictureElement = evt.target.closest('.picture');
     if (pictureElement) {
@@ -30,6 +29,7 @@ const renderPictures = () => {
       openPictureModal(clickedPicture);
     }
   });
+
 };
 
 export {renderPictures};

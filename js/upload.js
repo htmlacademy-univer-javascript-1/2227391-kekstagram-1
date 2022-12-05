@@ -1,5 +1,6 @@
 import {isEscKey} from './util.js';
 import {effects, styleForFilter} from './photo-effects.js';
+import {sendFormAsync} from './network.js';
 
 const uploadImage = document.querySelector('#upload-file');
 const editor = document.querySelector('.img-upload__overlay');
@@ -17,12 +18,34 @@ const sliderElement = document.querySelector('.effect-level__slider');
 const effectLevelValue = document.querySelector('.effect-level__value');
 const effectLevel = document.querySelector('.img-upload__effect-level');
 
-const closeEditor = () => {
+const errorTemplate = document.querySelector('#error');
+const successTemplate = document.querySelector('#success');
+
+const event = new Event('change');
+
+effectLevel.classList.add('hidden');
+sliderElement.classList.add('hidden');
+let currentEffectClass = 'effects__preview--none';
+let currentEffectInfo = effects['marvin'];
+
+const pristine = new Pristine(form, {
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'text-invalid__error'
+}, true);
+
+export const closeEditor = () => {
   uploadImage.value = '';
+  form.reset();
+  submitButton.disabled = false;
   hashtag.value = '';
   comment.value = '';
   editor.classList.add('hidden');
+  currentEffectClass = 'effects__preview--none';
   document.body.classList.remove('modal-open');
+  sliderElement.classList.add('hidden');
+  effectLevel.classList.add('hidden');
+  hashtag.dispatchEvent(event);
 };
 
 const onEscKeydown = (evt) => {
@@ -38,6 +61,7 @@ uploadImage.addEventListener('change', () => {
   document.body.classList.add('modal-open');
   editor.classList.remove('hidden');
 
+  submitButton.disabled = false;
   scaleControlValue.value = '100%';
   imagePreview.style.transform = 'scale(1)';
   imagePreview.style.filter = 'none';
@@ -45,10 +69,7 @@ uploadImage.addEventListener('change', () => {
 });
 
 //Наложение фильтров
-effectLevel.classList.add('hidden');
-sliderElement.classList.add('hidden');
-let currentEffectClass = 'effects__preview--none';
-let currentEffectInfo = effects['marvin'];
+
 
 noUiSlider.create(
   sliderElement, {
@@ -125,15 +146,12 @@ const regex = /(^\s*$)|(^#[A-zА-яЁё0-9]{1,19}$)/;
 
 const isCorrectHashtag = (value) => regex.test(value);
 
-const pristine = new Pristine(form, {
-  classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'text-invalid__error'
-}, true);
 
 const setSubmitButton = () => {
   submitButton.disabled = !isHashtagChecked || !isCommentChecked;
 };
+
+hashtag.addEventListener('change', () => { submitButton.disabled = !pristine.validate();});
 
 const validateHashtag = (value) => {
   const hashtags = value.split(' ');
@@ -164,6 +182,53 @@ pristine.addValidator(
   'Допустимая длина комментария - 140 символов'
 );
 
-form.addEventListener('submit', () => {
-  pristine.validate();
+const successFunc = () => {
+  const successCopy = successTemplate.cloneNode(true).content.querySelector('.success');
+
+  successCopy.addEventListener(
+    'click',
+    (evt) => {
+      if (evt.target.className !== 'success__inner' && evt.target.className !== 'success__title') {
+        document.body.removeChild(successCopy);
+        closeEditor();
+      }
+    });
+  document.body.appendChild(successCopy);
+};
+
+const errorFunc = (text) => {
+  const errorCopy = errorTemplate.cloneNode(true).content.querySelector('.error');
+  errorCopy.querySelector('.error__title').textContent = text;
+  errorCopy.classList.remove('hidden');
+  errorCopy.addEventListener(
+    'click',
+    (evt) => {
+      if (evt.target.className !== 'error__inner' && evt.target.className !== 'error__title') {
+        errorCopy.classList.add('hidden');
+        document.body.removeChild(errorCopy);
+      }
+    });
+  document.body.appendChild(errorCopy);
+};
+
+document.addEventListener('keydown', (evt) => {
+  if (evt.key === 'Escape') {
+    const errorBlock = document.body.querySelector('.error');
+    const errorCopy = errorTemplate.cloneNode(true);
+    const successBlock = document.body.querySelector('.success');
+    if (errorBlock) { document.body.removeChild(errorBlock);errorCopy.classList.add('hidden'); }
+    else if (successBlock) { document.body.removeChild(successBlock); closeEditor(); }
+    else if (
+      document.activeElement.className !== 'text__hashtags' &&
+      document.activeElement.tagName !== 'TEXTAREA'
+    ) {
+      closeEditor();
+    }
+  }
+});
+
+submitButton.addEventListener('click', (evt) => {
+  submitButton.disabled = true;
+  evt.preventDefault();
+  sendFormAsync(new FormData(form), successFunc, errorFunc);
 });
