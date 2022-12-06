@@ -14,7 +14,7 @@ closeErrorButton.addEventListener('click', () => {
 export function showErrorMessage(message, reason) {
   errorBlock.classList.remove('hidden');
   errorMessage.textContent = message;
-  errorReason.textContent = reason === undefined ? '' : reason;
+  if(errorReason !== null) {errorReason.textContent = reason === undefined ? '' : reason;}
 }
 
 errorBlock.addEventListener('click', (evt) => {

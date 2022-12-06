@@ -18,16 +18,16 @@ function isStringLengthAllowed(string, maxLength) {
 
 const isEscKey = (keyCode) => keyCode === 'Escape';
 
-function randomElement(array) {
+function getRandomElement(array) {
   return array[getRandomNumber(0, array.length - 1)];
 }
 
-function randomElements(n, array) {
+function getRandomElements(n, array) {
   const set = new Set();
   for (let i = 0; i < n; i++) {
     let element;
     do {
-      element = randomElement(array);
+      element = getRandomElement(array);
     } while (set.has(element));
     set.add(element);
   }
@@ -42,4 +42,4 @@ function debounce (callback, timeoutDelay = 500) {
   };
 }
 
-export {getRandomNumber, isStringLengthAllowed, isEscKey, randomElements, debounce};
+export {getRandomNumber, isStringLengthAllowed, isEscKey, getRandomElements, debounce};

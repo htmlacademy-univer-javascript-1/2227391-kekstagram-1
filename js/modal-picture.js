@@ -1,6 +1,5 @@
 import {isEscKey} from './util.js';
 
-
 const pictureModalElement = document.querySelector('.big-picture');
 const commentCountElement = pictureModalElement.querySelector('.comments-count');
 const imageElement = pictureModalElement.querySelector('.big-picture__img').querySelector('img');

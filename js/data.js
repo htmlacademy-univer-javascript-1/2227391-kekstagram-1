@@ -7,6 +7,8 @@ const MIN_LIKES  = 15;
 const MAX_LIKES = 200;
 const MAX_AVATAR = 6;
 
+export const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
 const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',

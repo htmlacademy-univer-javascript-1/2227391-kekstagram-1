@@ -9,7 +9,7 @@ const filterHandler = (pictures) => {
     filter.addEventListener(
       'click',
       () => {
-        filters.forEach((_filterButton) => _filterButton.classList.remove('img-filters__button--active'));
+        filters.forEach((filterButton) => filterButton.classList.remove('img-filters__button--active'));
         filter.classList.add('img-filters__button--active');
         debounceRendering(pictures, filter.id);
       }

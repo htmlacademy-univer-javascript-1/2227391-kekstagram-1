@@ -1,28 +1,34 @@
 import {isEscKey} from './util.js';
 import {effects, styleForFilter} from './photo-effects.js';
 import {sendFormAsync} from './network.js';
+import {FILE_TYPES} from './data.js';
+import {showErrorMessage} from './load-handler.js';
 
-const uploadImage = document.querySelector('#upload-file');
+const uploadImageElement = document.querySelector('#upload-file');
 const editor = document.querySelector('.img-upload__overlay');
 const closeButton = document.querySelector('#upload-cancel');
 const form = document.querySelector('.img-upload__form');
-const hashtag = form.querySelector('.text__hashtags');
-const comment = form.querySelector('.text__description');
+const hashtagInput = form.querySelector('.text__hashtags');
+const commentInput = form.querySelector('.text__description');
 const submitButton = form.querySelector('.img-upload__submit');
 
 const scaleControlSmaller = document.querySelector('.scale__control--smaller');
 const scaleControlBigger = document.querySelector('.scale__control--bigger');
 const scaleControlValue = document.querySelector('.scale__control--value');
-const imagePreview = document.querySelector('.img-upload__preview');
+const imagePreview = document.querySelector('.img-upload__preview > img');
 const sliderElement = document.querySelector('.effect-level__slider');
 const effectLevelValue = document.querySelector('.effect-level__value');
 const effectLevel = document.querySelector('.img-upload__effect-level');
+const effectsPreview = document.querySelectorAll('.effects__preview');
 
 const errorTemplate = document.querySelector('#error');
 const successTemplate = document.querySelector('#success');
 
 const event = new Event('change');
 
+let isHashtagChecked = true;
+let isCommentChecked = true;
+const regex = /(^\s*$)|(^#[A-zА-яЁё0-9]{1,19}$)/;
 let currentEffectClass = 'effects__preview--none';
 let currentEffectInfo = effects['marvin'];
 
@@ -33,31 +39,58 @@ const pristine = new Pristine(form, {
 }, true);
 
 export const closeEditor = () => {
-  uploadImage.value = '';
+  uploadImageElement.value = '';
+  imagePreview.src = '';
   form.reset();
   submitButton.disabled = false;
-  hashtag.value = '';
-  comment.value = '';
+  hashtagInput.value = '';
+  commentInput.value = '';
   editor.classList.add('hidden');
   currentEffectClass = 'effects__preview--none';
   document.body.classList.remove('modal-open');
   sliderElement.classList.add('hidden');
   effectLevel.classList.add('hidden');
-  hashtag.dispatchEvent(event);
+  scaleControlValue.value = '100%';
+  imagePreview.style.transform = 'scale(1)';
+  hashtagInput.dispatchEvent(event);
+  imagePreview.src = 'img/upload-default-image.jpg';
+
+  for (const effectPreview of effectsPreview) {
+    effectPreview.style.backgroundImage = `url(${imagePreview.src})`;
+  }
 };
 
 const onEscKeydown = (evt) => {
-  if (isEscKey(evt.key) && evt.target !== hashtag && evt.target !== comment) {
+  if (isEscKey(evt.key) && evt.target !== hashtagInput && evt.target !== commentInput) {
     closeEditor();
   }
 };
 
-uploadImage.addEventListener('change', () => {
+function validateFile(fileName) {
+  return FILE_TYPES.some((filetype) => fileName.endsWith(`.${filetype}`));
+}
+
+uploadImageElement.addEventListener('change', () => {
   document.addEventListener('keydown', onEscKeydown);
   closeButton.addEventListener('click', closeEditor, {once: true});
 
   document.body.classList.add('modal-open');
   editor.classList.remove('hidden');
+
+  const file = uploadImageElement.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = validateFile(fileName);
+
+  if (matches) {
+    imagePreview.src = URL.createObjectURL(file);
+
+    for (const effectPreview of effectsPreview) {
+      effectPreview.style.backgroundImage = `url(${imagePreview.src})`;
+    }
+  } else {
+    showErrorMessage(`Некорректный формат файла: ${file.name}`, file.name);
+    return;
+  }
 
   submitButton.disabled = false;
   scaleControlValue.value = '100%';
@@ -67,8 +100,6 @@ uploadImage.addEventListener('change', () => {
 });
 
 //Наложение фильтров
-
-
 noUiSlider.create(
   sliderElement, {
     range: {
@@ -138,10 +169,6 @@ scaleControlBigger.addEventListener(
 );
 
 //Валидация текстовых полей
-let isHashtagChecked = true;
-let isCommentChecked = true;
-const regex = /(^\s*$)|(^#[A-zА-яЁё0-9]{1,19}$)/;
-
 const isCorrectHashtag = (value) => regex.test(value);
 
 
@@ -149,7 +176,7 @@ const setSubmitButton = () => {
   submitButton.disabled = !isHashtagChecked || !isCommentChecked;
 };
 
-hashtag.addEventListener('change', () => { submitButton.disabled = !pristine.validate();});
+hashtagInput.addEventListener('change', () => { submitButton.disabled = !pristine.validate();});
 
 const validateHashtag = (value) => {
   const hashtags = value.split(' ');
@@ -169,13 +196,13 @@ const validateComment = (value) => {
 };
 
 pristine.addValidator(
-  hashtag,
+  hashtagInput,
   validateHashtag,
   'Неверный формат хэштега'
 );
 
 pristine.addValidator(
-  comment,
+  commentInput,
   validateComment,
   'Допустимая длина комментария - 140 символов'
 );
