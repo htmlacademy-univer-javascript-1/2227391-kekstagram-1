@@ -47,6 +47,8 @@ export const closeEditor = () => {
   document.body.classList.remove('modal-open');
   sliderElement.classList.add('hidden');
   effectLevel.classList.add('hidden');
+  scaleControlValue.value = '100%';
+  imagePreview.style.transform = 'scale(1)';
   hashtag.dispatchEvent(event);
   imagePreview.src = 'img/upload-default-image.jpg';
 
