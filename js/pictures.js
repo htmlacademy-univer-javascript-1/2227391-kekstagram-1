@@ -1,7 +1,7 @@
 import {openPictureModal} from './modal-picture.js';
 import {randomElements} from './util.js';
 
-const picturesListElem = document.querySelector('.pictures');
+const picturesListElement = document.querySelector('.pictures');
 const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesFragment = document.createDocumentFragment();
 
@@ -34,9 +34,9 @@ const renderPictures = (pictures, filter) => {
     picturesSorted.forEach((picture) => { appendPicture(picture); });
   }
 
-  picturesListElem.appendChild(picturesFragment);
+  picturesListElement.appendChild(picturesFragment);
 
-  picturesListElem.addEventListener('click', (evt) => {
+  picturesListElement.addEventListener('click', (evt) => {
     const pictureElement = evt.target.closest('.picture');
     if (pictureElement) {
       const clickedPicture = pictures.find(({id}) => Number(pictureElement.dataset.id) === id);
