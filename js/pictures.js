@@ -1,4 +1,3 @@
-
 import {openPictureModal} from './modal-picture.js';
 import {randomElements} from './util.js';
 

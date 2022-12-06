@@ -1,4 +1,3 @@
-
 const effects = {
   'chrome': makeEffect('grayscale', '', 0, 1, 1, 0.1),
   'sepia': makeEffect('sepia', '', 0, 1, 1, 0.1),
