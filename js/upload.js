@@ -85,7 +85,7 @@ uploadImage.addEventListener('change', () => {
       effectPreview.style.backgroundImage = `url(${imagePreview.src})`;
     }
   } else {
-    showErrorMessage('Некорректный формат файла', fileName);
+    showErrorMessage(`Некорректный формат файла: ${file.name}`, file.name);
     return;
   }
 
