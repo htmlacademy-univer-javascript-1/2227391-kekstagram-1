@@ -1,5 +1,5 @@
 import {openPictureModal} from './modal-picture.js';
-import {randomElements} from './util.js';
+import {getRandomElements} from './util.js';
 
 const picturesListElement = document.querySelector('.pictures');
 const photoTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -25,7 +25,7 @@ const renderPictures = (pictures, filter) => {
       appendPicture(picture);
     });
   } else if (filter === 'filter-random') {
-    randomElements(10, pictures).forEach((picture) => {
+    getRandomElements(10, pictures).forEach((picture) => {
       appendPicture(picture);
     });
   } else {
